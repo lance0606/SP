@@ -281,3 +281,157 @@ hist(Pall(50,3),col='lightgrey',main='Probability distribution when n=50 and cho
 #probability distribution for choosing 3 strategies are very different. When
 #prisoners choose strategy1, there are about 30% probability that they can all
 #freed, while there is no chance for choosing strategy 2 and 3. 
+
+################################################################################
+
+##find_one_loop is used to find the loop starting with a certain number in the box.
+
+##The input of the function:
+
+#k: start number of loop.
+
+#box: Represents the distribution of 2n cards randomly assigned in 2n boxes.
+
+##The output of this function:
+
+#Return a vector representing the found loop.
+
+##Variable explanation in the function:
+
+#"temp_k": Temporary variable for loop, initial assignment is k.
+
+#"loop:" record the found loop.
+
+find_one_loop<-function(k,box){
+  temp_k<-k
+  loop<-c(k)
+  while(box[temp_k]!=k){
+    temp_k<-box[temp_k]
+    loop<-append(loop,temp_k)
+  }
+  return(loop)
+}
+
+################################################################################
+
+##find_all_loop is used to find all loops that exist in the box.
+
+##The input of this function:
+
+#n: The number of prisoners, boxes and cards is 2n.
+
+#box: Represents the distribution of 2n cards randomly assigned in 2n boxes.
+
+##The output of this function:
+
+#Return a vector that records the unique length of all loops that exist in the box.
+
+##Variable explanation in the function:
+
+#all_loop: record all loops, initially empty.
+
+#idx: Indicates the number of the box.
+
+find_all_loop<-function(n,box){
+  all_loop<-c()
+  idx<-1:(2*n)
+  
+  #Randomly select one of the remaining numbers to start to find a loop, 
+  #and select a loop from all the numbers.
+  
+  #delete the number in the loop.
+  
+  while (length(idx)!=0) {
+    k<-sample(idx,1)
+    loop<-find_one_loop(k,box)
+    all_loop<-append(all_loop,length(loop))
+    idx<-idx[!idx %in% loop]
+  }
+  return(unique(all_loop))
+}
+
+################################################################################
+
+##"dloop" is used to estimate the probability of each loop length from 1 to 2n 
+#occurring at least once in a random shuffling of cards to boxes.
+
+##The input of this function:
+
+#n: The number of prisoners, boxes and cards is 2n.
+
+#nreps: Number of simulations (default 10000).
+
+##The output of this function:
+
+#return a 2n-vector of probabilities.
+
+##Variable explanation in the function:
+
+#"prob": a vector of length 2n, counting the length counts of all loops 
+#found in each simulation.
+
+#"all_loop": record the unique length of all loops in each simulation.
+
+dloop<-function(n,nreps=10000){
+  prob<-rep(0,2*n)
+  for (i in 1:nreps) {
+    u<-sample(1:(2*n),2*n)
+    all_loop<-find_all_loop(n,u)
+    for (loop in all_loop) {
+      prob[loop]<-prob[loop]+1
+    }
+  }
+  prob<-prob/nreps
+  return(prob)
+}
+
+################################################################################
+#"dloop_plus" is used to count the length of the longest loop in each simulation; 
+#in all simulations, count the number of occurrences of each longest loop, 
+#and finally calculate the probability of each longest loop.
+
+##The input of this function:
+
+#n: The number of prisoners, boxes and cards is 2n.
+
+#nreps: Number of simulations (default 10000).
+
+##The output of this function:
+
+#return a 2n-vector of probabilities.
+
+##Variable explanation in the function:
+
+#"prob": a vector of length 2n, count the maximum length of all loops found 
+#in each simulation and count.
+
+#"all_loop": record the unique length of all loops in each simulation.
+
+dloop_plus<-function(n,nreps=10000){
+  prob<-rep(0,2*n)
+  for (i in 1:nreps) {
+    u<-sample(1:(2*n),2*n)
+    all_loop<-find_all_loop(n,u)
+    
+    prob[max(all_loop)]<-prob[max(all_loop)]+1
+  }
+  prob<-prob/nreps
+  return(prob)
+}
+
+################################################################################
+
+##probabilities visualization using dloop for n=50
+prob<-dloop(50)
+barplot(prob,
+        main='The probability distribution of each loop length from 1 to 2n 
+        occurring at least once in a random shuffling of cards to boxes',
+        xlab='100 prisoners',ylab='Probabilities')
+
+##probabilities visualization using dloop for n=50
+prob1<-dloop_plus(50)
+barplot(prob1,
+        main='The probability distribution of each longest loop occuring 
+        in a random shuffling of cards to boxes',
+        xlab='100 prisoners',ylab='Probabilities')
+sprintf('The probability that there is no loop longer than 50 is %f',sum(prob1[1:50]))
