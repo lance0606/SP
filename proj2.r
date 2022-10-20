@@ -1,4 +1,3 @@
-
 #Group member: Muhua Lu(s2445078), Luyu Sun(s2407311), Jiaqi Zhou(s2318871)
 #The address of our github repo: https://github.com/lance0606/SP.git
 #Member contributions:
@@ -467,15 +466,15 @@ dloop_plus<-function(n,nreps=10000){
 
 ##probabilities visualization using dloop for n=50
 prob<-dloop(50)
-barplot(prob,
+barplot(prob,space = 0,names.arg = 1:100,
         main='The probability distribution of each loop length from 1 to 2n 
         occurring at least once in a random shuffling of cards to boxes',
-        xlab='100 prisoners',ylab='Probabilities')
+        xlab='length of loops from 1 to 100',ylab='Probabilities')
 
 ##probabilities visualization using dloop for n=50
 prob1<-dloop_plus(50)
-barplot(prob1,
+barplot(prob1,space = 0,names.arg = 1:100,
         main='The probability distribution of each longest loop occuring 
         in a random shuffling of cards to boxes',
-        xlab='100 prisoners',ylab='Probabilities')
+        xlab='length of longest loop',ylab='Probabilities')
 sprintf('The probability that there is no loop longer than 50 is %f',sum(prob1[1:50]))
