@@ -1,3 +1,47 @@
+
+#Group member: Muhua Lu(s2445078), Luyu Sun(s2407311), Jiaqi Zhou(s2318871)
+#The address of our github repo: https://github.com/lance0606/SP.git
+#Member contributions:
+#Luyu Sun is responsible for writing the code for startegy1/2/3 and comment improvement;
+#Muhua Lu  is responsible for writing the code for Pone, Pall and example code;
+#Jiaqi Zhou is responsible for writing the code for dloop and related functions and example code;
+#While writing the code, we all ran into issues individually, but through group discussions, 
+#we resolved those issues together as well. Each of us is responsible for our own part, 
+#but each of us participated in the whole project, understood and discussed all the code.
+
+#Overview：
+#This project uses stochastic simulation to investigate a probability puzzle.
+
+#And the set up of this puzzle is:
+#there are 2n prisoners and each of them has a unique number (from 1 to 2n). 
+
+#And there is a room with 2n boxes in this prison, each box with a unique number
+#from 1 to 2n painted on the lid.
+
+#There are 2n cards, each printed with a number chosen at random from 1 to 2n.
+
+#The task of the prisoners is to find cards with the same number as their own by
+#opening up to n boxes, and if all prisoners succeed in finding their number, 
+#all of them will be freed.
+
+#In addition, after each prisoner leaves the room, the room is fully restored to
+#its original state. Prisoners who leave the room cannot communicate with 
+#pri-soners who have not entered the room.
+
+#There are three strategies, one of them has a surprisingly high probability of 
+#setting all prisoners free, and the goal of this project is to find this high 
+#probability strategy by comparing the outcomes of these three strategies.
+
+#The specific content of these three strategies is:
+#*Strategy1: first open the box with prisoner's number on it, check the number of
+#card. If the number is not the prisoner's number, open the box with the number
+#of card and repeat the procedure until the prisoner find the correct card or n
+#boxes without finding it.
+#*Strategy2: first open the box randomly, and then same process in strategy1.
+#*Strategy3: open n boxes at random, checking each card for their number.
+
+################################################################################
+
 #Content of strategy1-Each prisoner starts from the box with the same number 
 #as himself, and then opens the next box based on the card number in that box.
 
