@@ -1,5 +1,25 @@
 ## Group member: Muhua Lu(s2445078), Luyu Sun(s2407311), Jiaqi Zhou(s2318871)
 ## The address of our github repo: https://github.com/lance0606/SP.git
+## contribution:
+## Luyu Sun: Responsible for comment writing, complete four scenarios that need to return error or warning
+## Jiaqi Zhou: Responsible for the general process of framework writing and Newton's method
+## Muhua Lu:Use the finite difference method to estimate the approximate value of 
+## the hessian matrix, test multiple objective functions, and verify that the code 
+## can be applied smoothly
+## Overview:
+## This project implements Newton's method for minimization of functions.
+## Newton's method is a common methd for solving unconstrained optimization problems.
+## Newton's method is an iterative algorithm,The iteration direction of each step is 
+## along the direction in which the function value at the current point decreases.
+## The basic idea of Newton's method is to use the first-order derivative and second
+## order derivative (Hessen matrix) at the iteration point to perform quadratic 
+## function approximation on the objective function.
+## Then take the minimum point of the quadratic model as a new iteration point, 
+## and repeat this process until an approximate minimum value that satisfies the 
+## accuracy is obtained.
+## In the code, in addition to the basic operations, as needed, when some special 
+## situations occur, the function returns an error or a warning to inform the user.
+
 newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=20,eps=1e-6){
   ## This function is to find the minimum value by using newton's method.
   ## It takes several arguments as input.'theta' is a vector of initial values 
