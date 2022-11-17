@@ -1,3 +1,5 @@
+## Group member: Muhua Lu(s2445078), Luyu Sun(s2407311), Jiaqi Zhou(s2318871)
+## The address of our github repo: https://github.com/lance0606/SP.git
 newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=20,eps=1e-6){
   ## This function is to find the minimum value by using newton's method.
   ## It takes several arguments as input.'theta' is a vector of initial values 
@@ -30,11 +32,17 @@ newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=
     }
     
     if (is.null(hess)){ ## if 'hess' not provided, compute Hessian matrix approximately
-      row1<-(grad(theta+c(eps,0))-grad(theta-c(eps,0)))/(2*eps) ## get fxx and fxy
-      row2<-(grad(theta+c(0,eps))-grad(theta-c(0,eps)))/(2*eps) ## get fxy and fyy
-      hess_mat<-matrix(cbind(row1,row2),nrow=2,ncol=2) ## Combination into Hessian matrix
+      hess_mat<-matrix(0,nrow=length(theta),ncol=length(theta)) ## create an empty matrix
+      ## in this project, we use forward difference method to approximate hessian 
+      for(i in 1:length(theta)){ ## loop over parameters
+        theta_forward<-theta
+        theta_forward[i]<-theta[i]+eps ## increase theta[i] by eps
+        hess_mat[i,]<-(grad(theta_forward)-grad(theta))/eps ## approximate hessian
+      }
+      hess_mat<-(t(hess_mat)+hess_mat)/2 ##guarantee the hessian matrix symmetric
     } else {
       hess_mat<-hess(theta) ## compute Hessian matrix by formula directly
+      hess_mat<-(t(hess_mat)+hess_mat)/2 ##guarantee the hessian matrix symmetric
     }
     
     ## If Hessian matrix is not positive definite, add a multiple beta of the
@@ -48,9 +56,7 @@ newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=
         y<-tryCatch(length(chol(hess_mat+beta*diag(length(theta)))),error=function(e) {return(1)})
         if(y==1){ ## if modified Hessian is not positive definite
           beta=beta*10 ## multiply the multiplier by 10
-        }else{ ## if modified Hessian is positive definite
-          break
-        }
+        }else{ break } ## if modified Hessian is positive definite,break the loop
       }
     }
     
