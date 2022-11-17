@@ -20,7 +20,7 @@
 ## In the code, in addition to the basic operations, as needed, when some special 
 ## situations occur, the function returns an error or a warning to inform the user.
 
-newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=20,eps=1e-6){
+newt<-function(theta,func,grad,...,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=20,eps=1e-6){
   ## This function is to find the minimum value by using newton's method.
   ## It takes several arguments as input.'theta' is a vector of initial values 
   ## for the optimization parameters. 'func' is objective function.'grad' is the
@@ -39,7 +39,7 @@ newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=
   ## the minimum.
   
   ## If the objective or derivatives are not finite at the initial theta
-  if(any(is.infinite(func(theta))) | any(is.infinite(grad(theta)))){
+  if(any(is.infinite(func(theta,...))) | any(is.infinite(grad(theta,...)))){
     ## issue error and interrupt process
     stop('The objective or derivatives are not finite at the initial theta')
   }
@@ -47,7 +47,7 @@ newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=
   k=0 ## used to record the number of iterations,initialize to 0
   while(k<=maxit){ ## keep loop if the number of iterations is smaller than threshold
     ## if meet stopping criteria: ||grad(theta)|| < tol*(||func(theta)||+fscale)
-    if(abs(norm(grad(theta),type='2')) < tol*(abs(norm(func(theta),type='2'))+fscale)){
+    if(abs(norm(grad(theta,...),type='2')) < tol*(abs(norm(func(theta,...),type='2'))+fscale)){
       break ## interrupt
     }
     
@@ -57,11 +57,11 @@ newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=
       for(i in 1:length(theta)){ ## loop over parameters
         theta_forward<-theta
         theta_forward[i]<-theta[i]+eps ## increase theta[i] by eps
-        hess_mat[i,]<-(grad(theta_forward)-grad(theta))/eps ## approximate hessian
+        hess_mat[i,]<-(grad(theta_forward,...)-grad(theta,...))/eps ## approximate hessian
       }
       hess_mat<-(t(hess_mat)+hess_mat)/2 ##guarantee the hessian matrix symmetric
     } else {
-      hess_mat<-hess(theta) ## compute Hessian matrix by formula directly
+      hess_mat<-hess(theta,...) ## compute Hessian matrix by formula directly
       hess_mat<-(t(hess_mat)+hess_mat)/2 ##guarantee the hessian matrix symmetric
     }
     
@@ -81,14 +81,14 @@ newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=
     }
     
     ## get newton direction: -(inverse of modified Hessian matrix)*gradient
-    direction<-(-1)*chol2inv(chol(hess_mat+beta*diag(length(theta))))%*%grad(theta)
+    direction<-(-1)*chol2inv(chol(hess_mat+beta*diag(length(theta))))%*%grad(theta,...)
     
     ## Far from the optimum, the newton direction Δ might overshoot and increase objective. 
     ## If so, repeatedly halve the newton direction until func(θ + Δ) < func(θ).
     k_half<-0 ## record the number of times Δ should be halved
     alpha<-1 ## repeatedly halve the newton direction, start at 1
     while(k_half<=max.half){ ## keep loop if the number of halving times < threshold
-      if(func(theta+alpha%*%t(direction))<func(theta)){ ## if meet stopping criteria
+      if(func(theta+alpha%*%t(direction))<func(theta,...)){ ## if meet stopping criteria
         break ## choose this alpha and interrupt
       }
       k_half=k_half+1 ## update the number of halving times
@@ -113,10 +113,10 @@ newt<-function(theta,func,grad,k,hess=NULL,tol=1e-8,fscale=1,maxit=100,max.half=
   
   obj<-list()## create a list to return
   ## below are all elements containing in obj
-  obj$f<-func(theta) ## value of the objective
+  obj$f<-func(theta,...) ## value of the objective
   obj$theta<-theta ## value of the parameters
   obj$iter<-k ## number of iterations
-  obj$g<-grad(theta) ## gradient vector
+  obj$g<-grad(theta,...) ## gradient vector
   obj$hi<-chol2inv(chol(hess_mat)) ## inverse of the Hessian matrix
   return(obj)
 }
